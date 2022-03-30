@@ -55,6 +55,7 @@
     ┃ ┃ ┣ stats_resources.py
     ┃ ┃ ┗ teams_resource.py
     ┃ ┣ schemas
+    ┃ ┃ ┣ __init__.py
     ┃ ┃ ┣ player_schema.py
     ┃ ┃ ┣ season_schema.py
     ┃ ┃ ┣ stats_schema.py
