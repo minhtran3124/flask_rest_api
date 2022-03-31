@@ -1,16 +1,17 @@
+from typing import List
+
 from football_api.database import db
+from football_api.core.model import BaseModel
 
 
-class Stats(db.Model):
+class Stats(BaseModel):
     """
     Stats Flask-SQLAlchemy Model
     Represents objects contained in the stats table
     """
 
     stat_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    player_id = db.Column(
-        db.Integer, db.ForeignKey("players.player_id"), nullable=False
-    )
+    player_id = db.Column(db.Integer, db.ForeignKey("players.player_id"), nullable=False)
     season = db.Column(db.Integer, db.ForeignKey("seasons.year"), nullable=False)
     team_id = db.Column(db.Integer, db.ForeignKey("teams.team_id"), nullable=False)
     age = db.Column(db.Integer, nullable=False)
@@ -66,3 +67,23 @@ class Stats(db.Model):
             f"fantasy_points: {self.fantasy_points} "
             f"**Stats** "
         )
+
+    @classmethod
+    def find_by_name(cls, name) -> "Stats":
+        return cls.query.filter_by(name=name).first()
+
+    @classmethod
+    def find_by_id(cls, _id) -> "Stats":
+        return cls.query.filter_by(stat_id=_id).first()
+
+    @classmethod
+    def find_all(cls) -> List["Stats"]:
+        return cls.query.all()
+
+    @classmethod
+    def find_by_player_id(cls, _player_id) -> "Stats":
+        return cls.query.filter_by(player_id=_player_id).all()
+
+    @classmethod
+    def find_by_season(cls, _season) -> "Stats":
+        return cls.query.filter_by(season=_season).all()
