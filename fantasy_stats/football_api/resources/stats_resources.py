@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 class StatsResource(Resource):
     def get(self):
         logger.info("Retrieving all stats.")
-        stats = Stats.query.all()
+        stats = Stats.find_all()
 
         logger.info("All stats retrieved from database.")
         return _dump_stats(stats), 200
@@ -33,8 +33,7 @@ class StatsResource(Resource):
         stats = StatsSchema().load(request.get_json())
 
         try:
-            db.session.add(stats)
-            db.session.commit()
+            stats.save_to_db()
         except IntegrityError as e:
             logger.warning(
                 f"Integrity Error, this  is already in the database. Error: {e}."
@@ -56,7 +55,7 @@ class StatsPlayerResource(Resource):
         """
         logger.info(f"Retrieving stats for individual player, player_id={player_id}.")
 
-        player_stats = Stats.query.filter_by(player_id=player_id).all()
+        player_stats = Stats.find_by_player_id(player_id)
         if not player_stats:
             logger.warning(f"No stats found for player, player_id={player_id}")
             abort(404, message="Player not found")
@@ -74,7 +73,7 @@ class StatsSeasonResource(Resource):
         """
         logger.info(f"Retrieving stats for entire season={season}")
 
-        season_stats = Stats.query.filter_by(season=season).all()
+        season_stats = Stats.find_by_season(season)
         if not season_stats:
             logger.warning(f"No stats found for season, season={season}.")
             abort(404, message="Season not found.")

@@ -18,8 +18,8 @@ class PlayersResource(Resource):
     def get(self, id=None):
         """
         PlayersResource GET method. Retrieves all players found in the Football
-        Stats database, unless the id path parameter is provided. If this id
-        is provided then the player with the associated player_id is retrieved.
+        Stats database, unless the id path parameter is provided.
+        If this id is provided then the player with the associated player_id is retrieved.
         :param id: Player ID to retrieve, this path parameter is optional
         :return: Player, 200 HTTP status code
         """
@@ -39,7 +39,7 @@ class PlayersResource(Resource):
             abort(404, message="Player not found")
 
     def _get_player_by_id(self, player_id):
-        player = Player.query.filter_by(player_id=player_id).first()
+        player = Player.find_by_id(player_id)
         player_json = PlayerSchema().dump(player)
 
         if not player_json:
@@ -50,9 +50,9 @@ class PlayersResource(Resource):
 
     def _get_all_players(self, position):
         if position:
-            players = Player.query.filter_by(position=position).all()
+            players = Player.find_by_position(position)
         else:
-            players = Player.query.all()
+            players = Player.find_all()
 
         players_json = [PlayerSchema().dump(player) for player in players]
 
@@ -67,11 +67,10 @@ class PlayersResource(Resource):
         player = PlayerSchema().load(request.get_json())
 
         try:
-            db.session.add(player)
-            db.session.commit()
+            player.save_to_db()
         except IntegrityError as e:
             logger.warning(
-                f"Integrity Error, this team is already in the database. Error: {e}"
+                f"Integrity Error, this player is already in the database. Error: {e}"
             )
 
             abort(500, message="Unexpected Error!")

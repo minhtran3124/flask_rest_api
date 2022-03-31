@@ -37,14 +37,14 @@ class TeamsResource(Resource):
             abort(404, message="Team not found.")
 
     def _get_all_teams(self):
-        teams = Team.query.all()
+        teams = Team.find_all()
         teams_json = [TeamSchema().dump(team) for team in teams]
 
         logger.info("All teams successfully retrieved.")
         return teams_json
 
     def _get_team_by_id(self, id):
-        team = Team.query.filter_by(team_id=id).first()
+        team = Team.query.find_by_id(id)
         team_json = TeamSchema().dump(team)
 
         if not team_json:
@@ -63,8 +63,7 @@ class TeamsResource(Resource):
         team = TeamSchema().load(request.get_json())
 
         try:
-            db.session.add(team)
-            db.session.commit()
+            team.save_to_db()
         except IntegrityError as e:
             logger.warning(
                 f"Integrity Error, this team is already in the database. Error: {e}."

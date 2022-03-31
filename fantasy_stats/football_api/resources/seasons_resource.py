@@ -23,7 +23,7 @@ class SeasonsResource(Resource):
         """
         logger.info("Retrieving all seasons.")
 
-        seasons = Season.query.all()
+        seasons = Season.find_all()
         seasons_json = [SeasonSchema().dump(season) for season in seasons]
 
         logger.info("All seasons retrieved from database.")
@@ -38,8 +38,7 @@ class SeasonsResource(Resource):
         season = SeasonSchema().load(request.get_json())
 
         try:
-            db.session.add(season)
-            db.session.commit()
+            season.save_to_db()
         except IntegrityError as e:
             logger.warning(
                 f"Integrity Error, this season is already in the database. Error: {e}."
