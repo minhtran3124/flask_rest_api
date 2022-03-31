@@ -4,10 +4,14 @@ fantasy_stats/venv/
 /**/__pycache__/
 
 # logs
-fantasy_stats/football_api.log
+football_api.log
 
 # note
 NOTE.txt
 
 # environment file
 .env
+
+# Database
+fantasy_football.db
+
