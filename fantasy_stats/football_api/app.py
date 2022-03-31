@@ -6,6 +6,7 @@ sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
 from flask import Flask
 
+from football_api.constants import DATABASE_LOCATION
 from football_api.database import db
 from apis import init_api
 
@@ -30,8 +31,15 @@ def create_app(db_location):
     )
 
     app = Flask(__name__)
+
     app.config["SQLALCHEMY_DATABASE_URI"] = db_location
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['PROPAGATE_EXCEPTIONS'] = True
+
+
     db.init_app(app)
 
     # Initialize APIs for app
     return init_api(app)
+
+app = create_app(DATABASE_LOCATION)
